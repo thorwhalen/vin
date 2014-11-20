@@ -1,0 +1,54 @@
+
+@import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300);
+#sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+#sortable li { margin: 30px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px;background: #eeff33;  }
+#sortable li span { position: absolute; margin-left: -1.3em; }
+#sortable {
+	margin: 0px auto!important; 
+	width: 100%!important; 
+	
+	}
+
+
+body {
+font-family: 'Open Sans Condensed', sans-serif !important;
+background: fixed;
+background-repeat: repeat;
+background-position: center center;
+background-color: #F9F9F9;
+font-size: 14px;
+ 
+}
+.li_bg {
+cursor: move;
+-webkit-box-shadow: 1px 1px 15px 5px #D6D6D6;
+box-shadow: 1px 1px 15px 5px #D6D6D6;
+border: 2px solid #cecece;
+color: #333;
+background: rgb(255,255,255);
+background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(241,241,241,1) 60%, rgba(225,225,225,1) 78%, rgba(246,246,246,1) 100%);
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(60%,rgba(241,241,241,1)), color-stop(78%,rgba(225,225,225,1)), color-stop(100%,rgba(246,246,246,1)));
+background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(241,241,241,1) 60%,rgba(225,225,225,1) 78%,rgba(246,246,246,1) 100%);
+background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(241,241,241,1) 60%,rgba(225,225,225,1) 78%,rgba(246,246,246,1) 100%);
+background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(241,241,241,1) 60%,rgba(225,225,225,1) 78%,rgba(246,246,246,1) 100%);
+background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(241,241,241,1) 60%,rgba(225,225,225,1) 78%,rgba(246,246,246,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 );
+margin: 10px 0px;
+
+}
+.list-group-item.list-head {
+ 
+-webkit-box-shadow: 1px 1px 15px 5px #D6D6D6;
+box-shadow: 1px 1px 15px 5px #D6D6D6;
+border: 3px solid #cecece;
+}
+.mar-top{
+	margin: 40px auto;
+}
+.slider{
+	margin-top: 8px;
+}
+.form-g{
+	margin-bottom: 6px!important;
+	margin-top: 5px!important;
+	}
