@@ -179,6 +179,7 @@ function networkCtrl($scope, Network) {
         return Object.keys(obj);
     }
 
+    // TODO: Similar code to the calculateNetworkValue code block further down. Refactor
     $scope.recalculateWholeNetwork = function(){
     	slider_cnt = 1;
     	for(node in $scope.netwrkVars.vars){
