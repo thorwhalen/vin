@@ -1446,7 +1446,7 @@ support = Sizzle.support = {};
  * @returns {Object} Returns the current document
  */
 setDocument = Sizzle.setDocument = function( node ) {
-	var doc = node ? node.ownerDocument || node : preferredDoc,
+	var doc = node_name ? node_name.ownerDocument || node_name : preferredDoc,
 		parent = doc.defaultView;
 
 	// If no document and documentElement is available, return
@@ -1536,7 +1536,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 			var attrId = id.replace( runescape, funescape );
 			return function( elem ) {
 				var node = typeof elem.getAttributeNode !== strundefined && elem.getAttributeNode("id");
-				return node && node.value === attrId;
+				return node_name && node_name.value === attrId;
 			};
 		};
 	}
@@ -1648,7 +1648,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 
 		assert(function( div ) {
 			// Check to see if it's possible to do matchesSelector
-			// on a disconnected node (IE 9)
+			// on a disconnected node_name (IE 9)
 			support.disconnectedMatch = matches.call( div, "div" );
 
 			// This should fail with an exception
@@ -1891,9 +1891,9 @@ getText = Sizzle.getText = function( elem ) {
 
 	if ( !nodeType ) {
 		// If no nodeType, this is expected to be an array
-		for ( ; (node = elem[i]); i++ ) {
+		for ( ; (node_name = elem[i]); i++ ) {
 			// Do not traverse comment nodes
-			ret += getText( node );
+			ret += getText( node_name );
 		}
 	} else if ( nodeType === 1 || nodeType === 9 || nodeType === 11 ) {
 		// Use textContent for elements
@@ -2078,9 +2078,9 @@ Expr = Sizzle.selectors = {
 						// :(first|last|only)-(child|of-type)
 						if ( simple ) {
 							while ( dir ) {
-								node = elem;
-								while ( (node = node[ dir ]) ) {
-									if ( ofType ? node.nodeName.toLowerCase() === name : node.nodeType === 1 ) {
+								node_name = elem;
+								while ( (node_name = node_name[ dir ]) ) {
+									if ( ofType ? node_name.nodeName.toLowerCase() === name : node_name.nodeType === 1 ) {
 										return false;
 									}
 								}
@@ -2099,15 +2099,15 @@ Expr = Sizzle.selectors = {
 							cache = outerCache[ type ] || [];
 							nodeIndex = cache[0] === dirruns && cache[1];
 							diff = cache[0] === dirruns && cache[2];
-							node = nodeIndex && parent.childNodes[ nodeIndex ];
+							node_name = nodeIndex && parent.childNodes[ nodeIndex ];
 
-							while ( (node = ++nodeIndex && node && node[ dir ] ||
+							while ( (node_name = ++nodeIndex && node_name && node_name[ dir ] ||
 
 								// Fallback to seeking `elem` from the start
 								(diff = nodeIndex = 0) || start.pop()) ) {
 
 								// When found, cache indexes on `parent` and break
-								if ( node.nodeType === 1 && ++diff && node === elem ) {
+								if ( node_name.nodeType === 1 && ++diff && node_name === elem ) {
 									outerCache[ type ] = [ dirruns, nodeIndex, diff ];
 									break;
 								}
@@ -2120,16 +2120,16 @@ Expr = Sizzle.selectors = {
 						// xml :nth-child(...) or :nth-last-child(...) or :nth(-last)?-of-type(...)
 						} else {
 							// Use the same loop as above to seek `elem` from the start
-							while ( (node = ++nodeIndex && node && node[ dir ] ||
+							while ( (node_name = ++nodeIndex && node_name && node_name[ dir ] ||
 								(diff = nodeIndex = 0) || start.pop()) ) {
 
-								if ( ( ofType ? node.nodeName.toLowerCase() === name : node.nodeType === 1 ) && ++diff ) {
+								if ( ( ofType ? node_name.nodeName.toLowerCase() === name : node_name.nodeType === 1 ) && ++diff ) {
 									// Cache the index of each encountered element
 									if ( useCache ) {
-										(node[ expando ] || (node[ expando ] = {}))[ type ] = [ dirruns, diff ];
+										(node_name[ expando ] || (node_name[ expando ] = {}))[ type ] = [ dirruns, diff ];
 									}
 
-									if ( node === elem ) {
+									if ( node_name === elem ) {
 										break;
 									}
 								}
@@ -3508,7 +3508,7 @@ jQuery.support = (function( support ) {
 			support.boxSizing = div.offsetWidth === 4;
 		});
 
-		// Use window.getComputedStyle because jsdom on node.js will break without it.
+		// Use window.getComputedStyle because jsdom on node_name.js will break without it.
 		if ( window.getComputedStyle ) {
 			support.pixelPosition = ( window.getComputedStyle( div, null ) || {} ).top !== "1%";
 			support.boxSizingReliable = ( window.getComputedStyle( div, null ) || { width: "4px" } ).width === "4px";
@@ -3582,7 +3582,7 @@ function internalData( elem, name, data, pvt /* Internal Use Only */ ){
 		cache = isNode ? jQuery.cache : elem,
 
 		// Only defining an ID for JS objects if its cache already exists allows
-		// the code to shortcut on the same path as a DOM node with no cache
+		// the code to shortcut on the same path as a DOM node_name with no cache
 		id = isNode ? elem[ internalKey ] : elem[ internalKey ] && internalKey;
 
 	// Avoid doing any more work than we need to when trying to get data on an
@@ -3778,7 +3778,7 @@ jQuery.extend({
 		return internalRemoveData( elem, name, true );
 	},
 
-	// A method for determining if a DOM node can handle the data expando
+	// A method for determining if a DOM node_name can handle the data expando
 	acceptData: function( elem ) {
 		// Do not set data on non-element because it will not be cleared (#8335).
 		if ( elem.nodeType && elem.nodeType !== 1 && elem.nodeType !== 9 ) {
@@ -4560,7 +4560,7 @@ if ( !getSetAttribute ) {
 	// This fixes almost every IE6/7 issue
 	nodeHook = {
 		set: function( elem, value, name ) {
-			// Set the existing or create a new attribute node
+			// Set the existing or create a new attribute node_name
 			var ret = elem.getAttributeNode( name );
 			if ( !ret ) {
 				elem.setAttributeNode(
@@ -5195,7 +5195,7 @@ jQuery.event = {
 		}
 
 		// Support: Chrome 23+, Safari?
-		// Target should not be a text node (#504, #13143)
+		// Target should not be a text node_name (#504, #13143)
 		if ( event.target.nodeType === 3 ) {
 			event.target = event.target.parentNode;
 		}
@@ -6248,18 +6248,18 @@ jQuery.fn.extend({
 				// Use the original fragment for the last item instead of the first because it can end up
 				// being emptied incorrectly in certain situations (#8070).
 				for ( ; i < l; i++ ) {
-					node = fragment;
+					node_name = fragment;
 
 					if ( i !== iNoClone ) {
-						node = jQuery.clone( node, true, true );
+						node_name = jQuery.clone( node_name, true, true );
 
 						// Keep references to cloned scripts for later restoration
 						if ( hasScripts ) {
-							jQuery.merge( scripts, getAll( node, "script" ) );
+							jQuery.merge( scripts, getAll( node_name, "script" ) );
 						}
 					}
 
-					callback.call( this[i], node, i );
+					callback.call( this[i], node_name, i );
 				}
 
 				if ( hasScripts ) {
@@ -6270,15 +6270,15 @@ jQuery.fn.extend({
 
 					// Evaluate executable scripts on first document insertion
 					for ( i = 0; i < hasScripts; i++ ) {
-						node = scripts[ i ];
-						if ( rscriptType.test( node.type || "" ) &&
-							!jQuery._data( node, "globalEval" ) && jQuery.contains( doc, node ) ) {
+						node_name = scripts[ i ];
+						if ( rscriptType.test( node_name.type || "" ) &&
+							!jQuery._data( node_name, "globalEval" ) && jQuery.contains( doc, node_name ) ) {
 
-							if ( node.src ) {
+							if ( node_name.src ) {
 								// Hope ajax is available...
-								jQuery._evalUrl( node.src );
+								jQuery._evalUrl( node_name.src );
 							} else {
-								jQuery.globalEval( ( node.text || node.textContent || node.innerHTML || "" ).replace( rcleanScript, "" ) );
+								jQuery.globalEval( ( node_name.text || node_name.textContent || node_name.innerHTML || "" ).replace( rcleanScript, "" ) );
 							}
 						}
 					}
@@ -6500,10 +6500,10 @@ jQuery.extend({
 			srcElements = getAll( elem );
 
 			// Fix all IE cloning issues
-			for ( i = 0; (node = srcElements[i]) != null; ++i ) {
-				// Ensure that the destination node is not null; Fixes #9587
+			for ( i = 0; (node_name = srcElements[i]) != null; ++i ) {
+				// Ensure that the destination node_name is not null; Fixes #9587
 				if ( destElements[i] ) {
-					fixCloneNodeIssues( node, destElements[i] );
+					fixCloneNodeIssues( node_name, destElements[i] );
 				}
 			}
 		}
@@ -6514,8 +6514,8 @@ jQuery.extend({
 				srcElements = srcElements || getAll( elem );
 				destElements = destElements || getAll( clone );
 
-				for ( i = 0; (node = srcElements[i]) != null; i++ ) {
-					cloneCopyEvent( node, destElements[i] );
+				for ( i = 0; (node_name = srcElements[i]) != null; i++ ) {
+					cloneCopyEvent( node_name, destElements[i] );
 				}
 			} else {
 				cloneCopyEvent( elem, clone );
@@ -6528,7 +6528,7 @@ jQuery.extend({
 			setGlobalEval( destElements, !inPage && getAll( elem, "script" ) );
 		}
 
-		destElements = srcElements = node = null;
+		destElements = srcElements = node_name = null;
 
 		// Return the cloned set
 		return clone;
@@ -6554,7 +6554,7 @@ jQuery.extend({
 				if ( jQuery.type( elem ) === "object" ) {
 					jQuery.merge( nodes, elem.nodeType ? [ elem ] : elem );
 
-				// Convert non-html into a text node
+				// Convert non-html into a text node_name
 				} else if ( !rhtml.test( elem ) ) {
 					nodes.push( context.createTextNode( elem ) );
 
@@ -7079,7 +7079,7 @@ jQuery.extend({
 });
 
 // NOTE: we've included the "window" in window.getComputedStyle
-// because jsdom on node.js will break without it.
+// because jsdom on node_name.js will break without it.
 if ( window.getComputedStyle ) {
 	getStyles = function( elem ) {
 		return window.getComputedStyle( elem, null );
@@ -7903,7 +7903,7 @@ jQuery.extend({
 			s = jQuery.ajaxSetup( {}, options ),
 			// Callbacks context
 			callbackContext = s.context || s,
-			// Context for global events is callbackContext if it is a DOM node or jQuery collection
+			// Context for global events is callbackContext if it is a DOM node_name or jQuery collection
 			globalEventContext = s.context && ( callbackContext.nodeType || callbackContext.jquery ) ?
 				jQuery( callbackContext ) :
 				jQuery.event,
@@ -9563,7 +9563,7 @@ jQuery.fn.offset = function( options ) {
 
 	docElem = doc.documentElement;
 
-	// Make sure it's not a disconnected DOM node
+	// Make sure it's not a disconnected DOM node_name
 	if ( !jQuery.contains( docElem, elem ) ) {
 		return box;
 	}

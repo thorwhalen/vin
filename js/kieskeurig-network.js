@@ -1,5 +1,6 @@
-network_name = "Impressions to Sales";
+network_name = "Effects of increasing partner CPC";
 
+network_img_file = "img/kieskeurig-network.png"
 
 network_vars = {
         cpc: {
@@ -39,10 +40,10 @@ network_vars = {
         partners: {
             links: [{
                 inputs: ['clicks', 'cpp', 'priceElasticity'],
-                relation: 'f'
+                relation: 'minus_multiply'
             },{
                 inputs: ['maxpartners', 'cpc', 'priceElasticity'],
-                relation: 'f'
+                relation: 'minus_multiply'
             }],
             value: 500.0,
             viewname: 'partners',

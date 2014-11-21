@@ -1,5 +1,7 @@
 network_name = "Impressions to Sales";
 
+network_img_file = "img/example_network_with_manual.png"
+
 network_vars = {
         imps: {
             links: [{
@@ -9,7 +11,7 @@ network_vars = {
             value: 1000.0,
             viewname: 'imps',
             minvalue: 0.01,
-            maxvalue: 10000,
+            maxvalue: 20000,
             step: 0.001
         },
 
@@ -36,7 +38,7 @@ network_vars = {
             value: 50.0,
             viewname: 'clicks',
             minvalue: 0.01,
-            maxvalue: 100000,
+            maxvalue: 4000,
             step: 0.001
         },
 
@@ -118,7 +120,7 @@ Edit clicks (in key and in viewname value) to change the name. <br>\
 Edit value to set a new default value. <br>\
 minvalue, maxvalue, and step are for the slider. <br>\
 But now the important part. <br>\
-You need to specify how this variable (node) is connected to others through the link field.  <br>\
+You need to specify how this variable (node_name) is connected to others through the link field.  <br>\
 The link field contains a list of {inputs, relations} which specify a “relations” function that should take said inputs (variables) to compute clicks.  <br>\
 The reason there is several relations, is that clicks can be computed as imps * ctr or sales / cvr.  <br>\
 —> You need to specify ALL relations or the network won’t work correctly. <br>\

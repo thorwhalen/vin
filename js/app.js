@@ -51,46 +51,36 @@ myApp.directive('numbersOnly', function(){
    };
 });
 
-var node_val = {}
+var ordered_node_val_map = {}
 
 myApp.factory('Network', function(){
 	var Network = {};
-	Network.vars = network_vars
-
+	Network.vars = network_vars;
+    Network.img_file = network_img_file;
   	Network.name = network_name;
   	Network.generalInfo = network_general_info;
 
 	for (i in Network.vars){
-		node_val[Network.vars[i]['viewname']] = Network.vars[i]['value'];
+		ordered_node_val_map[Network.vars[i]['viewname']] = Network.vars[i]['value'];
 	}
-	//console.log(node_val);
+	//console.log(ordered_node_val_map);
 	return Network;
 })
 
 function inputsBeforeNode(inputs, topology, present_node){
 	var inp1_before = false
 	var inp2_before = false
-	for (node in topology){
-		if (node == inputs[0]){
+	for (node_name in topology){
+		if (node_name == inputs[0]){
 			inp1_before = true;
 		}
-		if (node == inputs[1]){
+		if (node_name == inputs[1]){
 			inp2_before = true;
 		}
-		if (node == present_node){
+		if (node_name == present_node){
 			if(inp1_before == false || inp2_before == false){
-                // console.log("---------------------------");
-                // console.log("In False");
-                // console.log(present_node);
-                // console.log(inputs);
-                // console.log("---------------------------");
 				return false;
 			}else{
-                // console.log("---------------------------");
-                // console.log("In True");
-                // console.log(present_node);
-                // console.log(inputs);
-                // console.log("---------------------------");
 				return true;
 			}
 		}
@@ -98,6 +88,29 @@ function inputsBeforeNode(inputs, topology, present_node){
 	return true
 }
 
+function getLinkInputValsArray(network_vars, orig_nodes, k) {
+    var links_list = network_vars[orig_nodes]['links'][k]['inputs']
+    var input_vals = []
+    for (ll in links_list) {
+        input_vals[ll] = parseFloat(network_vars[links_list[ll]]['value'])
+    }
+    return input_vals
+}
+
+// Function taking care of changing a node_name's value in the right places
+// in network vars, slider, textbox, ordered_node_val_map, (etc.?)
+function changeNodeValue($scope, node_name, new_value) {
+    var node_vars = $scope.netwrkVars.vars[node_name]
+    var node_obj = $('[name="' + node_vars['viewname'] + '"]')
+    //   to the netwrkVars
+    node_vars['value'] = new_value
+    //   changing the value in the original js object
+    ordered_node_val_map[node_name] = new_value;
+    //   changing the value in the slider
+    $("#node"+(node_obj.attr('id')).slice(1)).slider("value", node_vars['value']);
+    //   changing the value of the text box
+    node_obj.val(new_value);
+}
 
 function networkCtrl($scope, Network) {
     $scope.netwrkVars = Network;
@@ -115,9 +128,9 @@ function networkCtrl($scope, Network) {
 	        slide: function (event, ui) {
                 //console.log(ui.value);
 	            idtemp = $(this).attr('id');
-	            node = $(this).data('role');
-                //console.log(node);
-	            $scope.netwrkVars.vars[node]['value'] = ui.value;
+	            node_name = $(this).data('role');
+                //console.log(node_name);
+	            $scope.netwrkVars.vars[node_name]['value'] = ui.value;
 	            id_suffix = idtemp.slice(4);
 	            //console.log(id_suffix);
                 //console.log($scope.netwrkVars.vars);
@@ -145,8 +158,8 @@ function networkCtrl($scope, Network) {
 					tmep_node_val[Network.vars[i]['viewname']] = Network.vars[i]['value'];
 					//console.log(Network.vars[i]['viewname'])
 			    }
-			    node_val = tmep_node_val;
-			    //console.log(node_val);
+			    ordered_node_val_map = tmep_node_val;
+			    //console.log(ordered_node_val_map);
 			    $scope.recalculateWholeNetwork();
   			}
 	});
@@ -181,183 +194,73 @@ function networkCtrl($scope, Network) {
 
     // TODO: Similar code to the calculateNetworkValue code block further down. Refactor
     $scope.recalculateWholeNetwork = function(){
-    	slider_cnt = 1;
-    	for(node in $scope.netwrkVars.vars){
-    		for (k in $scope.netwrkVars.vars[node]['links']){
-    			if (inputsBeforeNode($scope.netwrkVars.vars[node]['links'][k]['inputs'], $scope.netwrkVars.vars, node)){
-    				if ($scope.netwrkVars.vars[node]['links'][k]['relation'] == 'multiply'){
-    					var1 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][0]]['value'];
-    					var2 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][1]]['value'];
-    					$scope.netwrkVars.vars[node]['value'] =  var1 * var2;
-    					sldr_suffix = ($('[name="'+$scope.netwrkVars.vars[node]['viewname']+'"]').attr('id')).slice(1);
-    					$("#node"+sldr_suffix).slider("value", $scope.netwrkVars.vars[node]['value']);
-                        node_val[node] = $scope.netwrkVars.vars[node]['value'];
-    					//slider_cnt = slider_cnt + 1;
-    					//console.log($scope.netwrkVars.vars[node]['viewname'] +" = "+$scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][0]]['viewname'] +" multiply "+$scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][1]]['viewname']+" = "+var1 * var2)
-    					$('[name="'+$scope.netwrkVars.vars[node]['viewname']+'"]').val($scope.netwrkVars.vars[node]['value']);
-    					break;
-    				}
-    				if ($scope.netwrkVars.vars[node]['links'][k]['relation'] == 'divide'){
-    					var1 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][0]]['value'];
-    					var2 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][1]]['value'];
-    					$scope.netwrkVars.vars[node]['value'] = var1 / var2;
-    					sldr_suffix = ($('[name="'+$scope.netwrkVars.vars[node]['viewname']+'"]').attr('id')).slice(1);
-    					$("#node"+sldr_suffix).slider("value", $scope.netwrkVars.vars[node]['value']);
-                        node_val[node] = $scope.netwrkVars.vars[node]['value'];
-    					//slider_cnt = slider_cnt + 1;
-    					//console.log($scope.netwrkVars.vars[node]['viewname'] +" = "+$scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][0]]['viewname'] +" divide "+$scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][1]]['viewname']+" = "+var1 / var2)
-    					$('[name="'+$scope.netwrkVars.vars[node]['viewname']+'"]').val($scope.netwrkVars.vars[node]['value']);
-    					break;
-    				}
-    				if ($scope.netwrkVars.vars[node]['links'][k]['relation'] == 'plus'){
-    					var1 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][0]]['value'];
-    					var2 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][1]]['value'];
-    					$scope.netwrkVars.vars[node]['value'] = var1 + var2;
-    					sldr_suffix = ($('[name="'+$scope.netwrkVars.vars[node]['viewname']+'"]').attr('id')).slice(1);
-    					$("#node"+sldr_suffix).slider("value", $scope.netwrkVars.vars[node]['value']);
-                        node_val[node] = $scope.netwrkVars.vars[node]['value'];
-    					//slider_cnt = slider_cnt + 1;
-    					//console.log($scope.netwrkVars.vars[node]['viewname'] +" = "+$scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][0]]['viewname'] +" plus "+$scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][1]]['viewname']+" = "+var1 + var2)
-    					$('[name="'+$scope.netwrkVars.vars[node]['viewname']+'"]').val($scope.netwrkVars.vars[node]['value']);
-    					break;
-    				}
-    				if ($scope.netwrkVars.vars[node]['links'][k]['relation'] == 'minus'){
-    					var1 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][0]]['value'];
-    					var2 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][1]]['value'];
-    					$scope.netwrkVars.vars[node]['value'] = var1 - var2;
-    					sldr_suffix = ($('[name="'+$scope.netwrkVars.vars[node]['viewname']+'"]').attr('id')).slice(1);
-    					$("#node"+sldr_suffix).slider("value", $scope.netwrkVars.vars[node]['value']);
-                        node_val[node] = $scope.netwrkVars.vars[node]['value'];
-    					//slider_cnt = slider_cnt + 1;
-    					//console.log($scope.netwrkVars.vars[node]['viewname'] +" = "+$scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][0]]['viewname'] +" minus "+$scope.netwrkVars.vars[$scope.netwrkVars.vars[node]['links'][k]['inputs'][1]]['viewname']+" = "+var1 - var2)
-    					$('[name="'+$scope.netwrkVars.vars[node]['viewname']+'"]').val($scope.netwrkVars.vars[node]['value']);
-    					break;
-    				}
-    			}
-    		}
-    		slider_cnt = slider_cnt + 1;
-    	}
+        var node_name;
+        var node_vars;
+        var slider_cnt = 1;
+        var k;  // loop counter
+        var start_calculation = false;
+        var new_value;  // will be used to hold a newly computed node_name value
+
+        for(node_name in $scope.netwrkVars.vars){
+            node_vars = $scope.netwrkVars.vars[node_name]
+            for (k in node_vars['links']) {
+                if (inputsBeforeNode(node_vars['links'][k]['inputs'], $scope.netwrkVars.vars, node_name)){
+                    // compute the new value using the appropriate link function and inputs
+                    new_value = compute(
+                        node_vars['links'][k]['relation'],  // computation_name
+                        getLinkInputValsArray($scope.netwrkVars.vars, node_name, k))  // input_vals
+                    // change the node_name's value where you have to
+                    changeNodeValue($scope, node_name, new_value)
+                }
+            }
+            slider_cnt = slider_cnt + 1;
+        }
     }
 
     $scope.calculateNetworkValue = function(){
     	changed_nodes = [];
-    	for (node in node_val){
-    		if(node_val[node] != $scope.netwrkVars.vars[node]['value']){
-    			changed_nodes.push(node);
-    			node_val[node] = $scope.netwrkVars.vars[node]['value'];
+    	for (node_name in ordered_node_val_map){
+    		if(ordered_node_val_map[node_name] != $scope.netwrkVars.vars[node_name]['value']){
+    			changed_nodes.push(node_name);
+    			ordered_node_val_map[node_name] = $scope.netwrkVars.vars[node_name]['value'];
     		}
     	}
-    	//console.log(changed_nodes);
+        var node_name;
+        var node_vars;
+        var slider_cnt = 1;
+        var i;  // loop counter
+        var k;  // loop counter
     	var start_calculation = false;
-    	slider_cnt = 1;
+        var new_value;  // will be used to hold a newly computed node_name value
+
     	for (i in changed_nodes){
-    		for (orig_nodes in $scope.netwrkVars.vars){
-    			if(changed_nodes[i] != orig_nodes && start_calculation == false){
-    				slider_cnt = slider_cnt + 1;
+    		for (node_name in $scope.netwrkVars.vars){
+                node_vars = $scope.netwrkVars.vars[node_name]
+    			if(changed_nodes[i] != node_name && start_calculation == false){
+    				slider_cnt += 1;
     				continue;
     			}
-    			if( changed_nodes[i] == orig_nodes && start_calculation == false){
+    			if( changed_nodes[i] == node_name && start_calculation == false){
     				start_calculation = true;
-    				slider_cnt = slider_cnt + 1;
+    				slider_cnt += 1;
     				continue;
     			}
     			if(start_calculation){
-    				for (k in $scope.netwrkVars.vars[orig_nodes]['links']){
-                        //console.log(orig_nodes);
-    					if (inputsBeforeNode($scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'], $scope.netwrkVars.vars, orig_nodes)){
-    						if ($scope.netwrkVars.vars[orig_nodes]['links'][k]['relation'] == 'multiply'){
+    				for (k in node_vars['links']){
+    					if (inputsBeforeNode(node_vars['links'][k]['inputs'], $scope.netwrkVars.vars, node_name)){
 
-                                // TODO: collect var values through a loop over all inputs! There may be 1 input, there may be more than 2..
-                                // TODO: Factor this code out. It's the same for every code block.
-    							var1 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][0]]['value'];
-    							var2 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][1]]['value'];
+                            // compute the new value using the appropriate link function and inputs
+                            new_value = compute(
+                                node_vars['links'][k]['relation'],  // computation_name
+                                getLinkInputValsArray($scope.netwrkVars.vars, node_name, k))  // input_vals
 
-                                // TODO: This is the part that actually computes. Better put this in a function baring the appropriate name
-    							$scope.netwrkVars.vars[orig_nodes]['value'] =  var1 * var2;
-
-                                // TODO: Is this part the same for every block? If so, refactor
-    							sldr_suffix = ($('[name="'+$scope.netwrkVars.vars[orig_nodes]['viewname']+'"]').attr('id')).slice(1);
-                                $("#node"+sldr_suffix).slider("value", $scope.netwrkVars.vars[orig_nodes]['value']);
-                                node_val[orig_nodes] = $scope.netwrkVars.vars[orig_nodes]['value'];
-    							$('[name="'+$scope.netwrkVars.vars[orig_nodes]['viewname']+'"]').val($scope.netwrkVars.vars[orig_nodes]['value']);
-                                //break;
-    						}
-    						if ($scope.netwrkVars.vars[orig_nodes]['links'][k]['relation'] == 'divide'){
-                                //console.log('div');
-                                //console.log(orig_nodes);
-    							var1 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][0]]['value'];
-    							var2 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][1]]['value'];
-
-    							$scope.netwrkVars.vars[orig_nodes]['value'] = var1 / var2;
-
-    							sldr_suffix = ($('[name="'+$scope.netwrkVars.vars[orig_nodes]['viewname']+'"]').attr('id')).slice(1);
-                                $("#node"+sldr_suffix).slider("value", $scope.netwrkVars.vars[orig_nodes]['value']);
-                                node_val[orig_nodes] = $scope.netwrkVars.vars[orig_nodes]['value'];
-    							$('[name="'+$scope.netwrkVars.vars[orig_nodes]['viewname']+'"]').val($scope.netwrkVars.vars[orig_nodes]['value']);
-                                //break;
-    						}
-                            // Start new function
-                            if ($scope.netwrkVars.vars[orig_nodes]['links'][k]['relation'] == 'f'){
-                                //console.log('div');
-                                //console.log(orig_nodes);
-                                var1 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][0]]['value'];
-                                var2 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][1]]['value'];
-                                var3 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][2]]['value'];
-
-                                $scope.netwrkVars.vars[orig_nodes]['value'] = var1 - (var3 * var2);
-
-                                sldr_suffix = ($('[name="'+$scope.netwrkVars.vars[orig_nodes]['viewname']+'"]').attr('id')).slice(1);
-                                $("#node"+sldr_suffix).slider("value", $scope.netwrkVars.vars[orig_nodes]['value']);
-                                node_val[orig_nodes] = $scope.netwrkVars.vars[orig_nodes]['value'];
-                                $('[name="'+$scope.netwrkVars.vars[orig_nodes]['viewname']+'"]').val($scope.netwrkVars.vars[orig_nodes]['value']);
-                                //break;
-                            } // End new function !!!
-    						if ($scope.netwrkVars.vars[orig_nodes]['links'][k]['relation'] == 'plus'){
-                                //console.log('plus');
-    							var1 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][0]]['value'];
-    							var2 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][1]]['value'];
-
-    							$scope.netwrkVars.vars[orig_nodes]['value'] = var1 + var2;
-
-    							sldr_suffix = ($('[name="'+$scope.netwrkVars.vars[orig_nodes]['viewname']+'"]').attr('id')).slice(1);
-                                $("#node"+sldr_suffix).slider("value", $scope.netwrkVars.vars[orig_nodes]['value']);
-                                node_val[orig_nodes] = $scope.netwrkVars.vars[orig_nodes]['value'];
-    							$('[name="'+$scope.netwrkVars.vars[orig_nodes]['viewname']+'"]').val($scope.netwrkVars.vars[orig_nodes]['value']);
-                                //break;
-    						}
-    						if ($scope.netwrkVars.vars[orig_nodes]['links'][k]['relation'] == 'minus'){
-                                //console.log('minus');
-    							var1 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][0]]['value'];
-    							var2 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][1]]['value'];
-
-    							$scope.netwrkVars.vars[orig_nodes]['value'] = var1 - var2;
-
-    							sldr_suffix = ($('[name="'+$scope.netwrkVars.vars[orig_nodes]['viewname']+'"]').attr('id')).slice(1);
-                                $("#node"+sldr_suffix).slider("value", $scope.netwrkVars.vars[orig_nodes]['value']);
-                                node_val[orig_nodes] = $scope.netwrkVars.vars[orig_nodes]['value'];
-    							$('[name="'+$scope.netwrkVars.vars[orig_nodes]['viewname']+'"]').val($scope.netwrkVars.vars[orig_nodes]['value']);
-                                //break;
-    						}
-                            // x * y ^ z (power_multiple) function
-                            if ($scope.netwrkVars.vars[orig_nodes]['links'][k]['relation'] == 'power_multiple'){
-                                var1 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][0]]['value'];
-                                var2 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][1]]['value'];
-                                var3 = $scope.netwrkVars.vars[$scope.netwrkVars.vars[orig_nodes]['links'][k]['inputs'][2]]['value'];
-
-    							$scope.netwrkVars.vars[orig_nodes]['value'] = var1 * Math.pow(var2, var3);
-
-    							sldr_suffix = ($('[name="'+$scope.netwrkVars.vars[orig_nodes]['viewname']+'"]').attr('id')).slice(1);
-                                $("#node"+sldr_suffix).slider("value", $scope.netwrkVars.vars[orig_nodes]['value']);
-                                node_val[orig_nodes] = $scope.netwrkVars.vars[orig_nodes]['value'];
-    							$('[name="'+$scope.netwrkVars.vars[orig_nodes]['viewname']+'"]').val($scope.netwrkVars.vars[orig_nodes]['value']);
-                                //break;
-    						}
+                            changeNodeValue($scope, node_name, new_value)
     					}
     				}
     			}
     		}
     	}
-    	//console.log($scope.netwrkVars.vars);
+//    	console.log(ordered_node_val_map)
     }
 
     $scope.onTxtBoxChange = function (tbobj){
@@ -367,3 +270,4 @@ function networkCtrl($scope, Network) {
         $scope.calculateNetworkValue();
     }
 }
+

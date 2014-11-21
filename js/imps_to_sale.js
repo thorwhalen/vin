@@ -1,5 +1,7 @@
 network_name = "Impressions to Sales";
 
+network_img_file = "img/imps_to_sales.png"
+
 network_vars = {
         imps: {
             links: [{
@@ -9,7 +11,7 @@ network_vars = {
             value: 1000.0,
             viewname: 'imps',
             minvalue: 0.01,
-            maxvalue: 10000,
+            maxvalue: 20000,
             step: 0.001
         },
 
@@ -36,7 +38,7 @@ network_vars = {
             value: 50.0,
             viewname: 'clicks',
             minvalue: 0.01,
-            maxvalue: 100000,
+            maxvalue: 5000,
             step: 0.001
         },
 
