@@ -92,12 +92,20 @@ This is because clicks is below imps and ctr. <br>\
 If you wanted to see what ctr you’d need to reach, for those clicks, with the impressions you have, <br>\
 you’d need to drag ctr below clicks and do what you just did. <br>\
 <p>\
-Not perfect, lots of improvements possible, but it’s a beginning.  <br>\
 <p>\
-If you want to try to write your own network, look into app.js.  <br>\
-At the top of the page you can name your network, write some info on it, and especially, define it.  <br>\
+<em>Building your own network you want?</em><br>\
+<br>\
+If you want to try to write your own network, this is what you need to do.  <br>\
+<ul>\
+   <li>Copy js/imps_to_sale.js (within the js/ folder) calling the copy something original. Say, foo.js</li>\
+   <li>Change the variables in the file to match the network specification you want (name, info, image file, vars)</li>\
+   <li>Copy imps_to_sale.html, calling it foo.html</li>\
+   <li>Look for the comment 'EDIT: Network JS' and change the name of the file from imps_to_sale.js to foo.js</li>\
+   <li>Edit index.html, adding this new great network of yours</li>\
+   <li>Now go to foo.html and watch your network break!</li>\
+</ul>\
 <p>\
-To define it you need to edit the json-like network_vars variable. <br>\
+Wait a minute! Not so fast! What the hell is this network_vars?!? That's the json-like variable in foo.js that does it all.\
 <p>\
 This variable is a JSON of elements such as: <br>\
 <p>\
@@ -123,10 +131,9 @@ But now the important part. <br>\
 You need to specify how this variable (node_name) is connected to others through the link field.  <br>\
 The link field contains a list of {inputs, relations} which specify a “relations” function that should take said inputs (variables) to compute clicks.  <br>\
 The reason there is several relations, is that clicks can be computed as imps * ctr or sales / cvr.  <br>\
-—> You need to specify ALL relations or the network won’t work correctly. <br>\
+—> If you want the network to be able to compute in any order, you need to specify ALL relations. <br>\
 —> The relation that is used to compute is the first one that will be found with all inputs ABOVE the variable that needs to be computed.  <br>\
 So, when clicks is recomputed, the program looks to see if imps and ctr are above (on the screen), <br> \
 if there not, the program looks to see if sales and cvr are above clicks, and if they are, these are used to recompute clicks.  <br>\
 <p>\
-If you want to change the image, just change the img/bg1.png image. \
 "

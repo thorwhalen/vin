@@ -88,8 +88,9 @@ function inputsBeforeNode(inputs, topology, present_node){
 	return true
 }
 
-function getLinkInputValsArray(network_vars, orig_nodes, k) {
-    var links_list = network_vars[orig_nodes]['links'][k]['inputs']
+// function that returns the array of node values for the kth link of the node named node_name
+function getLinkInputValsArray(network_vars, node_name, k) {
+    var links_list = network_vars[node_name]['links'][k]['inputs']
     var input_vals = []
     for (ll in links_list) {
         input_vals[ll] = parseFloat(network_vars[links_list[ll]]['value'])
@@ -102,14 +103,10 @@ function getLinkInputValsArray(network_vars, orig_nodes, k) {
 function changeNodeValue($scope, node_name, new_value) {
     var node_vars = $scope.netwrkVars.vars[node_name]
     var node_obj = $('[name="' + node_vars['viewname'] + '"]')
-    //   to the netwrkVars
-    node_vars['value'] = new_value
-    //   changing the value in the original js object
-    ordered_node_val_map[node_name] = new_value;
-    //   changing the value in the slider
-    $("#node"+(node_obj.attr('id')).slice(1)).slider("value", node_vars['value']);
-    //   changing the value of the text box
-    node_obj.val(new_value);
+    node_vars['value'] = new_value  // to the netwrkVars
+    ordered_node_val_map[node_name] = new_value;  // changing the value in the original js object
+    $("#node"+(node_obj.attr('id')).slice(1)).slider("value", node_vars['value']);  // changing the value in the slider
+    node_obj.val(new_value);  //  changing the value of the text box
 }
 
 function networkCtrl($scope, Network) {
