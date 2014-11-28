@@ -1,6 +1,6 @@
 network_name = "Impressions to Sales";
 
-network_img_file = "img/example_network_with_manual.png"
+network_img_file = "nw_img/example_network_with_manual.png"
 
 network_vars = {
         imps: {

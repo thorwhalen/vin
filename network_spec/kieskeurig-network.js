@@ -1,6 +1,6 @@
 network_name = "Effects of increasing partner CPC";
 
-network_img_file = "img/kieskeurig-network.png"
+network_img_file = "nw_img/kieskeurig-network.png"
 
 network_vars = {
         cpc: {

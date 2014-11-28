@@ -1,6 +1,6 @@
 network_name = "Two CPC to Profit Networks";
 
-network_img_file = "img/two_cpc_to_profit.png"
+network_img_file = "nw_img/two_cpc_to_profit.png"
 
 network_vars = {
         a1: {
